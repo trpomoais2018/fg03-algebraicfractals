@@ -146,7 +146,7 @@ function getNewtoonAttractor(point, n, iterationAmount) {
 function getMandelbrotAttractor(startPoint, inputParams) {
   if (Math.sqrt(startPoint.x **2 + startPoint.y **2) > 2)
     return {type : 1, iterationAmount : 0};
-  const point = {x : startPoint.x, y : startPoint.y}
+  let point = {x : startPoint.x, y : startPoint.y}
   let x = 0;
   let y = 0;
   for(let i = 0; i < inputParams.maxIter; i++) {
@@ -162,7 +162,7 @@ function getMandelbrotAttractor(startPoint, inputParams) {
 function getJuliaAttractor(startPoint, inputParams) {
   if (Math.sqrt(startPoint.x **2 + startPoint.y **2) > 2)
     return {type : 1, iterationAmount : 0};
-  const point = {x : startPoint.x, y : startPoint.y}
+  let point = {x : startPoint.x, y : startPoint.y}
   let x = 0;
   let y = 0;
   for(let i = 0; i < inputParams.maxIter; i++) {
