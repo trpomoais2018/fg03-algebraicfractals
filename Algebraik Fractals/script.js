@@ -63,9 +63,9 @@ function chooseAttractor(point) {
         case 'newtonPool':
             return getNewtonPool(point, IterationNumber, 0);
         case 'juliaSet':
-            return getMandelbrotSet(point);
-        case 'mandelbrotSet':
             return getJuliaSet(point);
+        case 'mandelbrotSet':
+            return getMandelbrotSet(point);
     }
 }
 
@@ -103,7 +103,7 @@ function getJuliaSet(point) {
     var k = 0;
     while (k < IterationNumber) {
         if (x * x + y * y > 4)
-            return i;
+            return k;
         x1 = x * x - y * y + ConstJulia.x;
         y1 = 2 * x * y + ConstJulia.y;
         x = x1;
