@@ -15,12 +15,14 @@ let ctx;
 let width;
 let height;
 
+let juliaC;
+
 let maxIterations;
 let coloringCode;
 
 
-const init = () => {
-    let canvas = document.getElementById('mandelbrot-canvas');
+const init = juliaC => {
+    let canvas = document.getElementById('julia-canvas');
     ctx = canvas.getContext('2d');
     height = canvas.height;
     width = canvas.width;
@@ -30,7 +32,7 @@ const init = () => {
             pointsData[i].push({iterations: -1})
         }
     }
-    helpers.enableScaling(canvas, complexBorders, () => draw(maxIterations, coloringCode, ));
+    helpers.enableScaling(canvas, complexBorders, () => draw(maxIterations, coloringCode, juliaC));
     initialized = true;
 };
 
@@ -45,8 +47,7 @@ const drawClassic = (drawPixel) => {
     for (let i = 0; i < width; i++) {
         for (let j = 0; j < height; j++) {
             if (pointsData[i][j].iterations > 0 && pointsData[i][j].iterations <= maxIterations) {
-                    drawPixel({r: 0, g: 0, b: 0}, i, j);
-
+                drawPixel({r: 0, g: 0, b: 0}, i, j);
             }
         }
     }
@@ -82,8 +83,9 @@ const getBrightness = (i, j) => {
     return 255 * Math.log(1 + k) / Math.log(maxIterations);
 };
 
-export const draw = (maxIterationsAmount, coloringNumber) => {
-    if (!initialized) init();
+export const draw = (maxIterationsAmount, coloringNumber, juliaConstant) => {
+    if (!initialized) init(juliaConstant);
+    juliaC = juliaConstant;
     ctx.clearRect(0, 0, width, height);
     maxIterations = maxIterationsAmount;
     coloringCode = coloringNumber;
@@ -104,10 +106,10 @@ export const draw = (maxIterationsAmount, coloringNumber) => {
 
 const expandPoint = (maxIterations, p, i, j) => {
     let pointBailedOut = false;
-    let prev = {x: 0, y: 0};
+    let prev = p;
 
     for (let k = 0; k < maxIterations; k++) {
-        let next = getNextPoint(p.x, p.y, prev);
+        let next = getNextPoint(prev);
         if (Math.sqrt(next.x**2 + next.y**2) > 2){
             pointBailedOut = true;
             pointsData[i][j].iterations = k;
@@ -120,10 +122,10 @@ const expandPoint = (maxIterations, p, i, j) => {
     }
 };
 
-const getNextPoint = (x, y, prev) => {
+const getNextPoint = prev => {
     return {
-        x: prev.x**2-prev.y**2 + x,
-        y: 2*prev.x*prev.y + y
+        x: prev.x**2-prev.y**2 + juliaC.real,
+        y: 2*prev.x*prev.y + juliaC.imag
     };
 };
 

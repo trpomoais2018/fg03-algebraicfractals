@@ -21,8 +21,8 @@ export default class AppContainer extends React.Component {
             maxIterations: 5,
             juliaCVisible: false,
             juliaC: {
-                real: -0.2,
-                imag: 0.5
+                real: 0.2,
+                imag: 1
             },
             currentTabId: "newtonTab",
             selectedColorings: {
@@ -60,6 +60,28 @@ export default class AppContainer extends React.Component {
         </div>
     }
 
+    handleCReal = event => {
+        let parsed = parseFloat(event.target.value);
+        if (!isNaN(parsed) && /^[\-]?[0-9.]*$/.test(event.target.value)) {
+            let juliaC = this.state.juliaC;
+            juliaC.real = event.target.value;
+            this.setState({juliaC: {
+                real: event.target.value, imag: juliaC.imag
+            }});
+        }
+    };
+
+    handleCImag = event => {
+        let parsed = parseFloat(event.target.value);
+        if (!isNaN(parsed) && /^[\-]?[0-9.]*$/.test(event.target.value)) {
+            let juliaC = this.state.juliaC;
+            juliaC.imag = event.target.value;
+            this.setState({juliaC: {
+                    real: juliaC.real, imag: juliaC.imag
+                }});
+        }
+    };
+
     componentDidMount() {
         this.redraw();
     }
@@ -69,7 +91,6 @@ export default class AppContainer extends React.Component {
     }
 
     handleTabChange = (_, event) => {
-        debugger;
         this.setState({currentTabId: event.currentTarget.id});
         if (event.currentTarget.id === "juliaTab") {
             this.setState({juliaCVisible: true});
@@ -95,7 +116,14 @@ export default class AppContainer extends React.Component {
         return this.state.selectedColorings[id]
     };
 
+    getParsedJuliaC = () => {
+        return {
+            real: parseFloat(this.state.juliaC.real),
+            imag: parseFloat(this.state.juliaC.imag),
+        }
+    };
+
     redraw = () => {
-        drawFractal(this.state.maxIterations, this.state.currentTabId, this.getCurrentColorCode(), this.state.juliaC);
+        drawFractal(this.state.maxIterations, this.state.currentTabId, this.getCurrentColorCode(), this.getParsedJuliaC());
     }
 }
