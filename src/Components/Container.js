@@ -1,8 +1,6 @@
 import React from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import MaxIterationsSlider from './MaxIterationsSlider';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import FractalBox from "./FractalBox";
 import ColoringSelect from "./ColoringSelect";
@@ -22,6 +20,10 @@ export default class AppContainer extends React.Component {
         this.state = {
             maxIterations: 5,
             juliaCVisible: false,
+            juliaC: {
+                real: -0.2,
+                imag: 0.5
+            },
             currentTabId: "newtonTab",
             selectedColorings: {
                 "newtonTab": 0,
@@ -42,12 +44,14 @@ export default class AppContainer extends React.Component {
                 {this.state.juliaCVisible && <TextField
                     style={{position: "relative", top: "-15px", width: "50px", marginRight: "20px"}}
                     floatingLabelText="C real"
-                    defaultValue={-0.3}
+                    value={this.state.juliaC.real}
+                    onChange={this.handleCReal}
                 />}
                 {this.state.juliaCVisible && <TextField
                     style={{position: "relative", top: "-15px", width: "50px"}}
                     floatingLabelText="C imag"
-                    defaultValue={0.5}
+                    value={this.state.juliaC.imag}
+                    onChange={this.handleCImag}
                 />}
                 <FractalBox handleTabChange={this.handleTabChange}
                             currentDepth={this.state.maxIterations}
@@ -60,7 +64,12 @@ export default class AppContainer extends React.Component {
         this.redraw();
     }
 
+    componentDidUpdate() {
+        this.redraw();
+    }
+
     handleTabChange = (_, event) => {
+        debugger;
         this.setState({currentTabId: event.currentTarget.id});
         if (event.currentTarget.id === "juliaTab") {
             this.setState({juliaCVisible: true});
@@ -68,12 +77,10 @@ export default class AppContainer extends React.Component {
         else {
             this.setState({juliaCVisible: false});
         }
-        this.redraw();
     };
 
     handleSlider = (event, value) => {
         this.setState({maxIterations: value});
-        this.redraw();
     };
 
     handleColoringChange = (event, value) => {
@@ -81,7 +88,6 @@ export default class AppContainer extends React.Component {
         let selectedColorings = this.state.selectedColorings;
         selectedColorings[id] = value;
         this.setState({selectedColorings: selectedColorings});
-        this.redraw();
     };
 
     getCurrentColorCode = () => {
@@ -90,6 +96,6 @@ export default class AppContainer extends React.Component {
     };
 
     redraw = () => {
-        drawFractal(this.state.maxIterations, this.state.currentTabId, this.getCurrentColorCode());
+        drawFractal(this.state.maxIterations, this.state.currentTabId, this.getCurrentColorCode(), this.state.juliaC);
     }
 }

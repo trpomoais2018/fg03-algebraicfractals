@@ -22,14 +22,14 @@ export const enableScaling = (canvas, complexBorders, redraw) => {
         e = e || window.event;
         let c = 0.66;
         if (e.deltaY > 0) c = 1.33;
-        for (let key in complexBorders){
+        for (let key in complexBorders) {
             complexBorders[key] *= c;
         }
         redraw();
     });
     canvas.addEventListener("click", e => {
-        let shiftX =  (complexBorders.right - complexBorders.left) * (e.offsetX / canvas.width - 0.5);
-        let shiftY =  (complexBorders.top - complexBorders.bottom) * (e.offsetY / canvas.height - 0.5);
+        let shiftX = (complexBorders.right - complexBorders.left) * (e.offsetX / canvas.width - 0.5);
+        let shiftY = (complexBorders.top - complexBorders.bottom) * (e.offsetY / canvas.height - 0.5);
         complexBorders.right += shiftX;
         complexBorders.left += shiftX;
         complexBorders.top += shiftY;
