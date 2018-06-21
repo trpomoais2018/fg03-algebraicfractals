@@ -3,8 +3,8 @@ import * as helpers from './helpers';
 let complexBorders = {
     right: 3,
     left: -3,
-    top: -2,
-    bottom: -6,
+    top: 2,
+    bottom: -2,
 };
 
 let pointsData = [];

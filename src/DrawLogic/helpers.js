@@ -13,18 +13,28 @@ export const drawPixel = (imageData, rgb, i, j, width) => {
 export const getComplexPoint = (i, j, complexBorders, width, height) => {
     return {
         x: i * (complexBorders.right - complexBorders.left) / (width - 1) + complexBorders.left,
-        y: -j * (complexBorders.bottom - complexBorders.top) / (height - 1) + complexBorders.top
+        y: -j * (complexBorders.bottom - complexBorders.top) / (height - 1) + complexBorders.bottom
     }
 };
+
+const scalingFactor = 0.3;
 
 export const enableScaling = (canvas, complexBorders, redraw) => {
     canvas.addEventListener("mousewheel", e => {
         e = e || window.event;
-        let c = 0.66;
-        if (e.deltaY > 0) c = 1.33;
-        for (let key in complexBorders) {
-            complexBorders[key] *= c;
-        }
+        let c = 1 - scalingFactor;
+        if (e.deltaY > 0) c = 1 + scalingFactor;
+
+        let width = complexBorders.right - complexBorders.left;
+        let height = complexBorders.top - complexBorders.bottom;
+        let shiftX = (c * (width) - width) / 2;
+        let shiftY = (c * (height) - height) / 2;
+
+        complexBorders.right += shiftX;
+        complexBorders.left -= shiftX;
+        complexBorders.top += shiftY;
+        complexBorders.bottom -= shiftY;
+
         redraw();
     });
     canvas.addEventListener("click", e => {
