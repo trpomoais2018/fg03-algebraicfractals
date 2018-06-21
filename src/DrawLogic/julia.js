@@ -21,8 +21,9 @@ let maxIterations;
 let coloringCode;
 
 
-const init = juliaC => {
+const init = juliaConstant => {
     let canvas = document.getElementById('julia-canvas');
+    juliaC = juliaConstant;
     ctx = canvas.getContext('2d');
     height = canvas.height;
     width = canvas.width;
@@ -85,7 +86,8 @@ const getBrightness = (i, j) => {
 
 export const draw = (maxIterationsAmount, coloringNumber, juliaConstant) => {
     if (!initialized) init(juliaConstant);
-    juliaC = juliaConstant;
+    juliaC.real = juliaConstant.real;
+    juliaC.imag = juliaConstant.imag;
     ctx.clearRect(0, 0, width, height);
     maxIterations = maxIterationsAmount;
     coloringCode = coloringNumber;
