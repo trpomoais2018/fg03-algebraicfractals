@@ -1,80 +1,50 @@
-<!doctype html>
+﻿<!doctype html>
 <html>
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="Cache-Control" content="no-cache"/>
-	
-	<script>
-        HTMLCanvasElement.prototype.relMouseCoords = function (event) {
-            var totalOffsetX = 0;
-            var totalOffsetY = 0;
-            var canvasX = 0;
-            var canvasY = 0;
-            var currentElement = this;
+    <meta http-equiv="Cache-Control" content="no-cache" />
 
-            do {
-                totalOffsetX += currentElement.offsetLeft;
-                totalOffsetY += currentElement.offsetTop;
-            }
-            while (currentElement = currentElement.offsetParent)
+    <title>Алгебраические фракталы</title>
 
-            canvasX = event.pageX - totalOffsetX;
-            canvasY = event.pageY - totalOffsetY;
+    <script src="Render.js"></script>
+    <script src="Program.js"></script>
+    <script src="Newton.js"></script>
+    <script src="Mandelbrot.js"></script>
+    <script src="Julia.js"></script>
+    <script>
+    </script>
 
-            // Fix for variable canvas width
-            canvasX = Math.round( canvasX * (this.width / this.offsetWidth) );
-            canvasY = Math.round( canvasY * (this.height / this.offsetHeight) );
+    <body onload="touch()">
+        <table align="left" border="1">
+            <td>
+                Раскарска:
+                <select name="menu" size="1" id="color">
+            <option value="classic">Классическая</option>
+            <option value="level">Уровневая</option>
+            <option value="zebra">Зеброй</option>
+            <option value="gibrid">Гибридная</option>
+        </select></br>
+                Задание:
+                <select size="1" id="method">
+            <option value="Pool">Бассейн Ньютона</option>
+            <option value="Mandelbrot">Множество Мандельброта</option>
+            <option value="Julia">Множество Жюлиа</option>
+        </select></br>
+                Колличество итераций</br>
+                1:<input type="range" min="1" max="200" step="1" id="number">:200 </br>
+                Экспозиция гибридной раскарски</br>
+                <input type="range" min="1" max="10" step="1" value="1" id="numberBright"> </br>
+                <input type="button" onclick="getFractal(-2,2,2,-2)" value="отрисовать"></br>
+                </br>
+                Константа Жюлиа:</br>
+                Re : <input type="number" id="x" value="-0.15"></br>
+                Im : <input type="number" id="y" value="0.70"></br>
+            </td>
+        </table>
+        <td>
+            <canvas height="700" width="700" id="canvas"></canvas>
+        </td>
+    </body>
 
-            return {x:canvasX, y:canvasY}
-        }
-        
-		//пример рисования произвольного множества точек
-		function example(canvas) {
-			var canvasHeight = parseInt(canvas.getAttribute("height"));
-			var canvasWidth = parseInt(canvas.getAttribute("width"));
-			
-			//создаем 2d context
-			var context = canvas.getContext('2d');
-			
-			//создаем "буфер" imageData, в который будем класть новую информацию о цветах
-			var imageData = context.createImageData(canvasWidth, canvasHeight);
-			for (var i = 0; i < canvasWidth; i++) {
-				for (var j = 0; j < canvasHeight; j++) {
-					var red = 0;
-					var green = 0;
-					var blue = (i + j) % 255;
-					if (i % 20 == 0)
-						red = 150;
-					if (j % 20 == 0)
-						green = 150;
-					var opacity = 255;
-					
-					imageData.data[4*(i + canvasWidth*j) + 0] = red;
-					imageData.data[4*(i + canvasWidth*j) + 1] = green;
-					imageData.data[4*(i + canvasWidth*j) + 2] = blue;
-					imageData.data[4*(i + canvasWidth*j) + 3] = opacity;
-				}
-			}
-			//заполненный "буфер" imageData передаем в context для вывода на экран
-			context.putImageData(imageData, 0, 0);
-		}
-        
-        function mouseDownHandler(canvas, e) {
-	        var coords = canvas.relMouseCoords(e);
-	        alert("x=" + coords.x + " " + "y=" + coords.y);
-        }
-		
-		//вызывается после загрузки body
-		function run () {
-            var canvas = document.getElementById("canvas");
-            canvas.addEventListener("mousedown",
-                function(e) { mouseDownHandler(canvas, e); },
-                false);
-			example(canvas);
-		}
-	</script>
-
-<body onload="run()">
-  <canvas height='200' width='200' id='canvas'></canvas>
-</body>
 </html>
