@@ -61,24 +61,30 @@ export default class AppContainer extends React.Component {
     }
 
     handleCReal = event => {
-        let parsed = parseFloat(event.target.value);
-        if (!isNaN(parsed) && /^[\-]?[0-9.]*$/.test(event.target.value)) {
+        let val = event.target.value;
+        let parsed = parseFloat(val);
+        if (!isNaN(parsed) && /^[\-]?[0-9.]*$/.test(val) || val === "" || val === "-") {
             let juliaC = this.state.juliaC;
-            juliaC.real = event.target.value;
-            this.setState({juliaC: {
-                real: event.target.value, imag: juliaC.imag
-            }});
+            juliaC.real = val;
+            this.setState({
+                juliaC: {
+                    real: juliaC.real, imag: juliaC.imag
+                }
+            });
         }
     };
 
     handleCImag = event => {
-        let parsed = parseFloat(event.target.value);
-        if (!isNaN(parsed) && /^[\-]?[0-9.]*$/.test(event.target.value)) {
+        let val = event.target.value;
+        let parsed = parseFloat(val);
+        if (!isNaN(parsed) && /^[\-]?[0-9.]*$/.test(val) || val === "" || val === "-") {
             let juliaC = this.state.juliaC;
-            juliaC.imag = event.target.value;
-            this.setState({juliaC: {
+            juliaC.imag = val;
+            this.setState({
+                juliaC: {
                     real: juliaC.real, imag: juliaC.imag
-                }});
+                }
+            });
         }
     };
 
@@ -117,10 +123,13 @@ export default class AppContainer extends React.Component {
     };
 
     getParsedJuliaC = () => {
-        return {
+        let result = {
             real: parseFloat(this.state.juliaC.real),
             imag: parseFloat(this.state.juliaC.imag),
-        }
+        };
+        if (isNaN(result.real)) result.real = 0;
+        if (isNaN(result.imag)) result.imag = 0;
+        return result;
     };
 
     redraw = () => {
