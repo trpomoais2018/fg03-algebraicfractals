@@ -6,7 +6,7 @@ import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import FractalBox from "./FractalBox";
 import ColoringSelect from "./ColoringSelect";
-import drawFractal from  "../drawing";
+import drawFractal from "../DrawLogic/drawing";
 
 
 export default class AppContainer extends React.Component {
@@ -15,8 +15,8 @@ export default class AppContainer extends React.Component {
         this.styles = {
             container: {
                 margin: "auto",
-                height: "500px",
-                width: "1000px"
+                height: "600px",
+                width: "800px"
             }
         };
         this.state = {
@@ -38,10 +38,16 @@ export default class AppContainer extends React.Component {
                 <MaxIterationsSlider maxIterations={this.state.maxIterations} onChange={this.handleSlider}/>
                 <ColoringSelect onChange={this.handleColoringChange}
                                 tabId={this.state.currentTabId}
-                                value={this.state.selectedColorings[this.state.currentTabId]}/>
+                                value={this.getCurrentColorCode()}/>
                 {this.state.juliaCVisible && <TextField
-                    style={{position: "relative", top: "-17px"}}
-                    hintText="Julia C"
+                    style={{position: "relative", top: "-15px", width: "50px", marginRight: "20px"}}
+                    floatingLabelText="C real"
+                    defaultValue={-0.3}
+                />}
+                {this.state.juliaCVisible && <TextField
+                    style={{position: "relative", top: "-15px", width: "50px"}}
+                    floatingLabelText="C imag"
+                    defaultValue={0.5}
                 />}
                 <FractalBox handleTabChange={this.handleTabChange}
                             currentDepth={this.state.maxIterations}
@@ -62,21 +68,28 @@ export default class AppContainer extends React.Component {
         else {
             this.setState({juliaCVisible: false});
         }
+        this.redraw();
     };
 
     handleSlider = (event, value) => {
         this.setState({maxIterations: value});
-        drawFractal(this.mandelbrotCanvas, "a", "3");
+        this.redraw();
     };
 
     handleColoringChange = (event, value) => {
         let id = this.state.currentTabId;
         let selectedColorings = this.state.selectedColorings;
         selectedColorings[id] = value;
-        this.setState({selectedColorings: selectedColorings})
+        this.setState({selectedColorings: selectedColorings});
+        this.redraw();
+    };
+
+    getCurrentColorCode = () => {
+        let id = this.state.currentTabId;
+        return this.state.selectedColorings[id]
     };
 
     redraw = () => {
-        drawFractal(this.state.maxIterations);
+        drawFractal(this.state.maxIterations, this.state.currentTabId, this.getCurrentColorCode());
     }
 }

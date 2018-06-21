@@ -13,13 +13,13 @@ export default class FractalBox extends React.Component {
             <Paper>
                 <Tabs style={{flexWrap: "wrap"}} onChange={this.props.handleTabChange}>
                     <Tab label="Newton fractal" id={"newtonTab"}>
-                        <canvas id="newton-canvas" height={448} width={1000}/>
+                        <canvas id="newton-canvas" height={548} width={800}/>
                     </Tab>
                     <Tab label="Mandelbrot set" id="mandelbrotTab">
-                        <canvas id="mandelbrot-canvas" height={448} width={1000}/>
+                        <canvas id="mandelbrot-canvas" height={548} width={800}/>
                     </Tab>
                     <Tab label="Julia set" id="juliaTab">
-                        <canvas id="julia-canvas" height={448} width={1000}/>
+                        <canvas id="julia-canvas" height={548} width={800}/>
                     </Tab>
                 </Tabs>
             </Paper>
