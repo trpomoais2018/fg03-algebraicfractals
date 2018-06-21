@@ -1,7 +1,7 @@
 let coords = { left: 0, top: 0, right: 0, bottom: 0 };
 let currentFractal = '';
 let currentPaint = '';
-let scale = 2;
+let scale = 0;
 
 function init(centerX, centerY, type) {
     if (type === undefined)
@@ -185,12 +185,7 @@ function mouseDownHandler(canvas, e) {
     let mousePosition = canvas.relMouseCoords(e);
     let i = mousePosition.x * (coords.right - coords.left) / (canvas.width - 1) + coords.left;
     let j = mousePosition.y * (coords.bottom - coords.top) / (canvas.height - 1) + coords.top;
-    if (e.button === 0) {
-        scale /= 1.5;
-    }
-    if (e.button === 2) {
-        scale *= 1.5;
-    }
+    scale = e.button === 0 ? scale / 1.5 : scale * 1.5;
     init(i, j, currentFractal);
 }
 
@@ -200,4 +195,8 @@ function mousePress() {
             mouseDownHandler(canvas, e);
         },
         false);
+}
+
+function resetScale() {
+    scale = 2;
 }

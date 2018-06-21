@@ -30,15 +30,15 @@
     </script>
 </head>
 
-<body>
-    <canvas height='500' width='500' id='canvas'/></canvas>
-    <div class="slidecontainer">
-        <input type="range" min="1" max="100" value="25" class="slider" id="n">
+<body onload = "mousePress();">
+    <canvas oncontextmenu = "return false;" height = '500' width = '500' id = 'canvas'/></canvas>
+    <div class = "slidecontainer">
+        <input type = "range" min = "1" max = "100" value = "25" class = "slider" id = "n">
     </div>
     <span>Фрактал:</span>
-        <button type="button" id = 'newtonPool' onclick = "init(0, 0, 'newtonPool')">Бассейны Ньютона</button>
-        <button type="button" id = 'mandelbrotSet' onclick = "init(0, 0, 'mandelbrotSet')">Множество Мандельброта</button>
-        <button type="button" id = 'juliaSet' onclick = "init(0, 0, 'juliaSet')">Множество Жюлиа</button><br>
+        <button type="button" id = 'newtonPool' onclick = "resetScale(); init(0, 0, 'newtonPool')">Бассейны Ньютона</button>
+        <button type="button" id = 'mandelbrotSet' onclick = "resetScale(); init(0, 0, 'mandelbrotSet')">Множество Мандельброта</button>
+        <button type="button" id = 'juliaSet' onclick = "resetScale(); init(0, 0, 'juliaSet')">Множество Жюлиа</button><br>
     <span>Раскраска:</span>
         <button type="button" id = 'classicalPaint' onclick = "changePaint('classical')">Классическая</button>
         <button type="button" id = 'levelPaint' onclick = "changePaint('levels')">Уровни</button>
@@ -47,6 +47,6 @@
     <span>Константа Жюлиа:</span>
         x<input id = "re" name = "re" value = "-0.12">
         + i<input id = "im" name = "im" value = "0.72"><br>  
-        <button type="button" onclick="init(0, 0)">Обновить</button>
+        <button type="button" onclick = "resetScale(); init(0, 0)">Обновить</button>
 </body>
 </html>
