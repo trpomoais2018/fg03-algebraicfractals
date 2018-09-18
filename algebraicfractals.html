@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+    <form>
+        <table>
+            <tr>
+                <td>
+                    <canvas height="600" width="600" id="canvas"></canvas>
+                </td>
+                <td>
+                    <table>
+                        <tr>
+                            <td>метод:</td>
+                            <td>
+                                <select size="1" id="method">
+                                    <option value="0">Бассейн Ньютона</option>
+                                    <option value="1">Множество Мандельброта</option>
+                                    <option value="2">Множество Жюлиа</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>раскарска:</td>
+                            <td>
+                                <select size="1" id="color">
+                                    <option value="0">классическая</option>
+                                    <option value="1">уровневая</option>
+                                    <option value="2">зеброй</option>
+                                    <option value="3">гибридная</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>колличество итераций</td>
+                            <td>
+                                <input type="number" id="iter" value="30"> </br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>константа Жюлиа</td></br>
+                            <td>
+                                x:   <input type="number" id="x" value="-0.12"></br>
+                                y:   <input type="number" id="y" value="0.74">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>масштабирование</td>
+                            <td>
+                                <select size="1" id="zoom">
+                                    <option value="0">приблизить</option>
+                                    <option value="1">удалить</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="center"></br></br><input type="button" onclick="draw()" value="нарисовать"></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <script src="Fractal.js"></script>
+</body>
+</html>
