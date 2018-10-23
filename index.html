@@ -1,10 +1,216 @@
 <!doctype html>
 <html>
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="Cache-Control" content="no-cache"/>
-	
-	<script>
+    <meta http-equiv="Cache-Control" content="no-cache" />
+
+
+<body>
+    <canvas height='360' width='360' id='canvas'></canvas>
+    <p>
+        <input id="reduceImage" type="button" value="Уменьшить">
+    </p>
+    <p>
+        <select id="fractal">
+            <option value="Newton" selected>Newton</option>
+            <option value="Mandelbrot">Mandelbrot</option>
+            <option value="Julia">Julia</option>
+        </select>
+    </p>
+    <p>
+        <select id="coloring">
+            <option value="Classical" selected>Classical</option>
+            <option value="Levels">Levels</option>
+            <option value="Zebra">Zebra</option>
+            <option value="Hybrid">Hybrid</option>
+        </select>
+    </p>
+    <p>
+        <label for="n">максимальное число итераций</label>
+        <input id="n" value="100">
+    </p>
+    <p>
+        <label for="c">c для множества Жюлиа</label>
+        <input id="c" value="-0.4 +0.6i">
+    </p>
+    <p>
+        <input id="elem" type="button" value="Построить">
+    </p>
+
+    <script>
+
+        elem.onclick = function () {
+            maxIterations = document.getElementById("n").value;
+            var c = document.getElementById("c").value.replace('i', ' ').split((' '));
+            ca = +c[0];
+            cb = +c[1];
+
+            DrawFractal();
+
+            canvas.addEventListener("mousedown",
+                function (e) { mouseDownHandler(canvas, e); },
+                false);
+        }
+
+        var frame = { left: -2, rigth: 2, bottom: -2, top: 2 };
+        var ca;
+        var cb;
+        var maxIterations;
+
+        function DrawFractal() {
+            var canvas = document.getElementById("canvas");
+            var fractal = document.getElementById("fractal").value;
+            var coloring = document.getElementById("coloring").value;
+            var canvasHeight = parseInt(canvas.getAttribute("height"));
+            var canvasWidth = parseInt(canvas.getAttribute("width"));
+
+            var context = canvas.getContext('2d');
+
+            var imageData = context.createImageData(canvasWidth, canvasHeight);
+            for (var i = 0; i < canvasWidth; i++) {
+                for (var j = 0; j < canvasHeight; j++) {
+                    var a = (i * (frame.rigth - frame.left) / (canvasWidth - 1) + frame.left);
+                    var b = (j * (frame.bottom - frame.top) / (canvasHeight - 1) + frame.top);
+
+                    var pointData = window[fractal](a, b, maxIterations, 0);
+                    var color = window[coloring](pointData, maxIterations);
+
+                    var pix = (i + j * canvasWidth) * 4;
+                    imageData.data[pix + 0] = color[0];
+                    imageData.data[pix + 1] = color[1];
+                    imageData.data[pix + 2] = color[2];
+                    imageData.data[pix + 3] = color[3];
+                }
+            }
+            context.putImageData(imageData, 0, 0);
+        }
+
+        function Mandelbrot(a, b, maxIterations) {
+            var n = 0;
+            var ca = a;
+            var cb = b;
+
+            while (n < maxIterations) {
+                var aa = a * a - b * b;
+                var bb = 2 * a * b;
+                a = aa + ca;
+                b = bb + cb;
+                if (a * a + b * b > 16.0) {
+                    break;
+                }
+                n++;
+            }
+
+            return {
+                n: n
+            };
+        }
+
+
+        function Julia(a, b, maxIterations) {
+            var n = 0;
+
+            while (n < maxIterations) {
+                var aa = a * a - b * b;
+                var bb = 2 * a * b;
+                a = aa + ca;
+                b = bb + cb;
+                if (a * a + b * b > 16.0) {
+                    break;
+                }
+                n++;
+            }
+
+            return {
+                n: n
+            };
+        }
+
+        function Newton(x, y, maxIterations, n) {
+            var cos = Math.cos(Math.PI / 3);
+            var sin = Math.sin(Math.PI / 3);
+            if (maxIterations === 0)
+                return {
+                    atractor: 0,
+                    n: n
+                };
+            if (isCloseToAtractor(x, y, 1, 0))
+                return {
+                    atractor: 1,
+                    n: n
+                };
+            if (isCloseToAtractor(x, y, -cos, sin))
+                return {
+                    atractor: 2,
+                    n: n
+                };
+            if (isCloseToAtractor(x, y, -cos, -sin))
+                return {
+                    atractor: 3,
+                    n: n
+                };
+            var x2 = x * x;
+            var y2 = y * y;
+            var x1 = 2 / 3 * x + (x2 - y2) / (3 * (x2 + y2) * (x2 + y2));
+            var y1 = 2 / 3 * y * (1 - x / ((x2 + y2) * (x2 + y2)));
+            return Newton(x1, y1, maxIterations - 1, n + 1);
+        }
+
+        function isCloseToAtractor(x1, y1, x2, y2) {
+            return Math.abs(x2 - x1) <= 0.0001 && Math.abs(y2 - y1) <= 0.0001;
+        }
+
+        function Levels(pointData, maxIterations) {
+            var bright = (pointData.n * 1 / (maxIterations - 1));
+            bright = (Math.sqrt(bright) * 255);
+
+            if (pointData.n == maxIterations) {
+                return [0, 0, 0, 255];
+            }
+            return [bright, bright, bright, 255];
+        }
+
+        function Classical(pointData, maxIterations) {
+            if (pointData.atractor >= 1) {
+                switch (pointData.atractor) {
+                    case 1:
+                        return [255, 0, 0, 255];
+                    case 2:
+                        return [0, 255, 0, 255];
+                    case 3:
+                        return [0, 0, 255, 255];
+                }
+            }
+            if (pointData.n == maxIterations)
+                return [0, 0, 0, 255];
+            else
+                return [255, 255, 255, 255];
+        }
+
+        function Zebra(pointData, maxIterations) {
+            if (pointData.n % 2 == 0)
+                return [0, 0, 0, 255];
+            else
+                return [255, 255, 255, 255];
+        }
+
+        function Hybrid(pointData, maxIterations) {
+            var bright = (pointData.n * 1 / (maxIterations - 1));
+            bright = (Math.sqrt(bright) * 255);
+
+            if (pointData.atractor >= 1) {
+                switch (pointData.atractor) {
+                    case 1:
+                        return [bright, 0, 0, 255];
+                    case 2:
+                        return [0, bright, 0, 255];
+                    case 3:
+                        return [0, 0, bright, 255];
+                }
+            }
+        }
+
         HTMLCanvasElement.prototype.relMouseCoords = function (event) {
             var totalOffsetX = 0;
             var totalOffsetY = 0;
@@ -22,59 +228,77 @@
             canvasY = event.pageY - totalOffsetY;
 
             // Fix for variable canvas width
-            canvasX = Math.round( canvasX * (this.width / this.offsetWidth) );
-            canvasY = Math.round( canvasY * (this.height / this.offsetHeight) );
+            canvasX = Math.round(canvasX * (this.width / this.offsetWidth));
+            canvasY = Math.round(canvasY * (this.height / this.offsetHeight));
 
-            return {x:canvasX, y:canvasY}
+            return { x: canvasX, y: canvasY }
         }
-        
-		//пример рисования произвольного множества точек
-		function example(canvas) {
-			var canvasHeight = parseInt(canvas.getAttribute("height"));
-			var canvasWidth = parseInt(canvas.getAttribute("width"));
-			
-			//создаем 2d context
-			var context = canvas.getContext('2d');
-			
-			//создаем "буфер" imageData, в который будем класть новую информацию о цветах
-			var imageData = context.createImageData(canvasWidth, canvasHeight);
-			for (var i = 0; i < canvasWidth; i++) {
-				for (var j = 0; j < canvasHeight; j++) {
-					var red = 0;
-					var green = 0;
-					var blue = (i + j) % 255;
-					if (i % 20 == 0)
-						red = 150;
-					if (j % 20 == 0)
-						green = 150;
-					var opacity = 255;
-					
-					imageData.data[4*(i + canvasWidth*j) + 0] = red;
-					imageData.data[4*(i + canvasWidth*j) + 1] = green;
-					imageData.data[4*(i + canvasWidth*j) + 2] = blue;
-					imageData.data[4*(i + canvasWidth*j) + 3] = opacity;
-				}
-			}
-			//заполненный "буфер" imageData передаем в context для вывода на экран
-			context.putImageData(imageData, 0, 0);
-		}
-        
+
         function mouseDownHandler(canvas, e) {
-	        var coords = canvas.relMouseCoords(e);
-	        alert("x=" + coords.x + " " + "y=" + coords.y);
-        }
-		
-		//вызывается после загрузки body
-		function run () {
-            var canvas = document.getElementById("canvas");
-            canvas.addEventListener("mousedown",
-                function(e) { mouseDownHandler(canvas, e); },
-                false);
-			example(canvas);
-		}
-	</script>
+            var coords = canvas.relMouseCoords(e);
+            enlargeImage(coords, e);
 
-<body onload="run()">
-  <canvas height='200' width='200' id='canvas'></canvas>
+        }
+
+        var alpha = 1;
+        var mousePosition = { x: 0, y: 0 };
+
+        function enlargeImage(coords, e) {
+            mousePosition.x = frame.left + (Math.abs(frame.rigth - frame.left)) / (canvas.offsetWidth - 1) * coords.x;
+            mousePosition.y = (frame.top - (((Math.abs(frame.top - frame.bottom))) / (canvas.offsetHeight - 1) * coords.y));
+
+            if (e.button == 0)
+                alpha *= 0.8;
+
+            changeFrameSize();
+            DrawFractal();
+        }
+
+        reduceImage.onclick = function () {
+            alpha *= 1.35;
+
+            changeFrameSize();
+            DrawFractal();
+        }
+
+        function changeFrameSize() {
+            frame.left = mousePosition.x - alpha;
+            frame.rigth = mousePosition.x + alpha;
+            frame.top = mousePosition.y + alpha;
+            frame.bottom = mousePosition.y - alpha;
+        }
+
+        function example(canvas) {
+            var canvasHeight = parseInt(canvas.getAttribute("height"));
+            var canvasWidth = parseInt(canvas.getAttribute("width"));
+
+            //создаем 2d context
+            var context = canvas.getContext('2d');
+
+            //создаем "буфер" imageData, в который будем класть новую информацию о цветах
+            var imageData = context.createImageData(canvasWidth, canvasHeight);
+            for (var i = 0; i < canvasWidth; i++) {
+                for (var j = 0; j < canvasHeight; j++) {
+                    var red = 0;
+                    var green = 0;
+                    var blue = (i + j) % 255;
+                    if (i % 20 == 0)
+                        red = 150;
+                    if (j % 20 == 0)
+                        green = 150;
+                    var opacity = 255;
+
+                    imageData.data[4 * (i + canvasWidth * j) + 0] = red;
+                    imageData.data[4 * (i + canvasWidth * j) + 1] = green;
+                    imageData.data[4 * (i + canvasWidth * j) + 2] = blue;
+                    imageData.data[4 * (i + canvasWidth * j) + 3] = opacity;
+                }
+            }
+            //заполненный "буфер" imageData передаем в context для вывода на экран
+            context.putImageData(imageData, 0, 0);
+        }
+    </script>
 </body>
+
+</html>
 </html>
